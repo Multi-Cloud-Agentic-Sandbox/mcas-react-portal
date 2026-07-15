@@ -1,0 +1,130 @@
+.home-page {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-lg);
+}
+
+.home-page__title {
+  margin: 0 0 var(--space-sm);
+  font-size: 1.5rem;
+}
+
+.home-page__intro {
+  margin: 0 0 var(--space-lg);
+  color: var(--color-text-muted);
+}
+
+.home-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--space-lg);
+}
+
+.home-page__status {
+  color: var(--color-text-muted);
+}
+
+.home-page__error {
+  color: var(--color-danger, #c0392b);
+  margin-bottom: var(--space-md);
+}
+
+.tool-card-slot {
+  min-height: 10rem;
+}
+
+.tool-card-slot--error {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.admin-page {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-lg);
+  max-width: 52rem;
+}
+
+.admin-page__title {
+  margin: 0 0 var(--space-md);
+}
+
+.admin-form {
+  display: grid;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.admin-form__row {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.admin-form__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.admin-form__actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.admin-list {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.admin-list__item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.admin-list__meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.admin-list__route + .admin-list__route::before {
+  content: " · ";
+}
+
+.admin-list__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.admin-preview {
+  margin-bottom: var(--space-xl);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.admin-preview__grid {
+  margin-top: var(--space-sm);
+}
+
+.tool-host {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-lg);
+}
+
+.tool-host--error {
+  color: var(--color-text-muted);
+}
