@@ -1,5 +1,7 @@
 # MCAS React Portal
 
+> Part of **MCAS** — full repository map: **[mcas-agent-framework](https://github.com/Multi-Cloud-Agentic-Sandbox/mcas-agent-framework)**.
+
 Module Federation **host** for the MCAS micro-frontend platform: home grid, dynamic tool routes, admin registry UI, and design-system showcase.
 
 ## Prerequisites
