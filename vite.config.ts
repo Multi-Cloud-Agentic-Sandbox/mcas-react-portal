@@ -24,11 +24,6 @@ export default defineConfig({
     host: true,
     strictPort: true,
     origin: "http://localhost:5173",
-    proxy: {
-      "/execute": { target: "http://127.0.0.1:8000", changeOrigin: true },
-      "/stream": { target: "http://127.0.0.1:8000", changeOrigin: true },
-      "/health": { target: "http://127.0.0.1:8000", changeOrigin: true },
-    },
   },
   build: {
     target: "chrome89",

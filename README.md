@@ -37,5 +37,3 @@ Or from MCAS root: `run-microfrontend.bat`
 |----------|---------|
 | `VITE_REGISTRY_URL` | `http://localhost:8090` |
 | `VITE_AZURE_*` | optional — see `@mcas/auth-client` |
-
-Agent proxy (dev): `/execute`, `/stream`, `/health` → `http://127.0.0.1:8000`
