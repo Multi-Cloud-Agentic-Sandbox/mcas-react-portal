@@ -4,13 +4,16 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@mcas/auth-client";
 import "@mcas/design-system/styles.css";
 import App from "./App";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>,
 );

@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Multi-Cloud-Agentic-Sandbox/mcas-react-portal.git"
@@ -13,8 +16,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mcas/auth-client": "file:../mcas-react-auth-client",
-    "@mcas/design-system": "file:../mcas-react-design-system",
+    "@mcas/auth-client": "https://github.com/Multi-Cloud-Agentic-Sandbox/mcas-react-auth-client/releases/download/v0.1.0/mcas-auth-client-0.1.0.tgz",
+    "@mcas/design-system": "https://github.com/Multi-Cloud-Agentic-Sandbox/mcas-react-design-system/releases/download/v0.1.0/mcas-design-system-0.1.0.tgz",
     "@module-federation/runtime": "2.7.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

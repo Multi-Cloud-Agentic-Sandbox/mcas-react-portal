@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { Avatar, Button } from "@mcas/design-system";
 import { useAuth } from "@mcas/auth-client";
-import "./portal.css";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `app-header__nav-link${isActive ? " app-header__nav-link--active" : ""}`;

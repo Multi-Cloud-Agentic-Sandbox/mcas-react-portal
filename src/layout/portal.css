@@ -128,3 +128,8 @@
 .tool-host--error {
   color: var(--color-text-muted);
 }
+
+.error-boundary {
+  padding: var(--space-xl);
+  text-align: center;
+}

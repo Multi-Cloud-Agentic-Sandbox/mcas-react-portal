@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@mcas/auth-client";
 import { Button, Input, Text } from "@mcas/design-system";
 import {
   deleteTool,
@@ -11,7 +12,8 @@ import type { ToolRegistryEntry } from "../types/tool";
 const emptyManifestUrl = "";
 
 export function AdminToolsPage() {
-  const { tools, loading, error, reload } = useToolsRegistry();
+  const { ensureMcasToken } = useAuth();
+  const { tools, loading, error, reload } = useToolsRegistry({ activeOnly: false });
   const [manifestUrl, setManifestUrl] = useState(emptyManifestUrl);
   const [preview, setPreview] = useState<ToolRegistryEntry | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -23,7 +25,8 @@ export function AdminToolsPage() {
     setSubmitError(null);
     setPreview(null);
     try {
-      const entry = await importToolFromManifest(manifestUrl.trim());
+      const token = await ensureMcasToken();
+      const entry = await importToolFromManifest(manifestUrl.trim(), token);
       setPreview(entry);
       setManifestUrl("");
       await reload();
@@ -38,7 +41,8 @@ export function AdminToolsPage() {
     setBusy(true);
     setSubmitError(null);
     try {
-      await syncToolFromManifest(toolId);
+      const token = await ensureMcasToken();
+      await syncToolFromManifest(toolId, token);
       await reload();
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Sync failed");
@@ -51,7 +55,8 @@ export function AdminToolsPage() {
     setBusy(true);
     setSubmitError(null);
     try {
-      await deleteTool(id);
+      const token = await ensureMcasToken();
+      await deleteTool(id, token);
       await reload();
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Delete failed");
@@ -115,6 +120,7 @@ export function AdminToolsPage() {
             <div>
               <strong>{tool.label}</strong>
               <div className="admin-list__meta">{tool.id}</div>
+              <div className="admin-list__meta">Status: {tool.status}</div>
               <div className="admin-list__meta">{tool.remoteEntry}</div>
               <div className="admin-list__meta">{tool.basePath}</div>
               <div className="admin-list__meta">
