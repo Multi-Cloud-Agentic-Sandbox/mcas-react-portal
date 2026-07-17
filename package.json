@@ -16,7 +16,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mcas/auth-client": "https://github.com/Multi-Cloud-Agentic-Sandbox/mcas-react-auth-client/releases/download/v0.1.0/mcas-auth-client-0.1.0.tgz",
+    "@mcas/auth-client": "file:../mcas-react-auth-client",
     "@mcas/design-system": "https://github.com/Multi-Cloud-Agentic-Sandbox/mcas-react-design-system/releases/download/v0.1.0/mcas-design-system-0.1.0.tgz",
     "@module-federation/runtime": "2.7.0",
     "react": "^18.3.1",

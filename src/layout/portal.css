@@ -125,6 +125,33 @@
   margin-top: var(--space-sm);
 }
 
+.auth-page {
+  flex: 1;
+  display: grid;
+  place-content: center;
+  padding: var(--space-xl);
+}
+
+.auth-page__card {
+  max-width: 24rem;
+  display: grid;
+  gap: var(--space-md);
+  padding: var(--space-xl);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.auth-page__title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.auth-page__intro {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
 .tool-host {
   flex: 1;
   overflow: auto;

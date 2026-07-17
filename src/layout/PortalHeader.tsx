@@ -6,7 +6,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `app-header__nav-link${isActive ? " app-header__nav-link--active" : ""}`;
 
 export function PortalHeader() {
-  const { authEnabled, isAuthenticated, isLoading, user, login, logout } = useAuth();
+  const { authEnabled, isAuthenticated, isLoading, user, logout } = useAuth();
 
   return (
     <header className="app-header">
@@ -41,11 +41,7 @@ export function PortalHeader() {
                 Log out
               </Button>
             </>
-          ) : (
-            <Button onClick={() => void login()} disabled={isLoading}>
-              Sign in
-            </Button>
-          )
+          ) : null
         ) : (
           <span className="app-header__dev-badge">Dev mode (no auth)</span>
         )}

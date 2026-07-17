@@ -9,7 +9,9 @@ Module Federation **host** for the MCAS micro-frontend platform: home grid, dyna
 - [mcas-tool-registry](https://github.com/Multi-Cloud-Agentic-Sandbox/mcas-tool-registry) on `:8090`
 - [mcas-auth-service](https://github.com/Multi-Cloud-Agentic-Sandbox/mcas-auth-service) on `:8080` (JWT exchange)
 
-`@mcas/auth-client` and `@mcas/design-system` are installed from **public GitHub Release `.tgz`** URLs (no PAT).
+`@mcas/auth-client` and `@mcas/design-system` are installed from **public GitHub Release `.tgz`** URLs (no PAT). Local override: `file:../mcas-react-auth-client` while iterating on auth.
+
+With MSAL configured (`VITE_AZURE_*` + `VITE_AUTH_SERVICE_URL`), unauthenticated users are redirected to **`/auth`**. NoAuth / DEV mode (incomplete Azure env) skips the gate.
 
 ## Dev
 
