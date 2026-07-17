@@ -1,3 +1,9 @@
+/* AppShell fills the viewport (DS layout.css may still ship height:100% until republished). */
+.app-shell {
+  height: 100vh;
+  height: 100dvh;
+}
+
 .home-page {
   flex: 1;
   overflow: auto;
