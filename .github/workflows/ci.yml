@@ -10,14 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
+      # Public GitHub Release .tgz deps — npm install resolves transitive deps (MSAL, etc.)
+      - run: npm install --no-fund --no-audit
+      - run: npm run build
