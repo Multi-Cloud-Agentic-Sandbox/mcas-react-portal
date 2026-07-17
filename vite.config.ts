@@ -2,6 +2,15 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { federation } from "@module-federation/vite";
 
+/** Host provides React singletons; remotes use import:false. Do not share @mcas/auth-client. */
+const sharedSingletons = {
+  react: { singleton: true, requiredVersion: "^18.3.1", eager: true },
+  "react/": { singleton: true, requiredVersion: "^18.3.1", eager: true },
+  "react-dom": { singleton: true, requiredVersion: "^18.3.1", eager: true },
+  "react-dom/": { singleton: true, requiredVersion: "^18.3.1", eager: true },
+  "react-router-dom": { singleton: true, requiredVersion: "^7.6.2", eager: true },
+} as const;
+
 export default defineConfig({
   plugins: [
     react(),
@@ -9,14 +18,7 @@ export default defineConfig({
       name: "portal",
       manifest: true,
       remotes: {},
-      shared: {
-        react: { singleton: true, requiredVersion: "^18.3.1" },
-        "react/": { singleton: true, requiredVersion: "^18.3.1" },
-        "react-dom": { singleton: true, requiredVersion: "^18.3.1" },
-        "react-dom/": { singleton: true, requiredVersion: "^18.3.1" },
-        "react-router-dom": { singleton: true, requiredVersion: "^7.6.2" },
-        "@mcas/auth-client": { singleton: true, requiredVersion: "^0.1.0" },
-      },
+      shared: sharedSingletons,
     }),
   ],
   server: {
