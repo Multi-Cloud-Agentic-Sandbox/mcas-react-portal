@@ -1,12 +1,24 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Avatar, Button } from "@mcas/design-system";
-import { useAuth } from "@mcas/auth-client";
+import { HasRight, useAuth } from "@mcas/auth-client";
+import {
+  RIGHT_RBAC_MANAGE,
+  RIGHT_REGISTRIES_MANAGE,
+  RIGHT_USERS_MANAGE,
+} from "../api/authAdminClient";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `app-header__nav-link${isActive ? " app-header__nav-link--active" : ""}`;
 
 export function PortalHeader() {
-  const { authEnabled, isAuthenticated, isLoading, user, logout } = useAuth();
+  const { authEnabled, isAuthenticated, isLoading, user, logout, getMcasToken } = useAuth();
+  const location = useLocation();
+  const subject = user ?? getMcasToken();
+  const showAdmin =
+    HasRight(subject, RIGHT_USERS_MANAGE) ||
+    HasRight(subject, RIGHT_RBAC_MANAGE) ||
+    HasRight(subject, RIGHT_REGISTRIES_MANAGE);
+  const adminActive = location.pathname.startsWith("/admin");
 
   return (
     <header className="app-header">
@@ -18,18 +30,11 @@ export function PortalHeader() {
         <NavLink to="/" end className={navLinkClass}>
           Home
         </NavLink>
-        <NavLink to="/admin/tools" className={navLinkClass}>
-          Admin
-        </NavLink>
-        <NavLink to="/design-system/tokens" className={navLinkClass}>
-          Tokens
-        </NavLink>
-        <NavLink to="/design-system/components" className={navLinkClass}>
-          Components
-        </NavLink>
-        <NavLink to="/design-system/agent-progress" className={navLinkClass}>
-          Agent progress
-        </NavLink>
+        {showAdmin ? (
+          <NavLink to="/admin" className={() => navLinkClass({ isActive: adminActive })}>
+            Admin
+          </NavLink>
+        ) : null}
       </nav>
       <div className="app-header__actions">
         {authEnabled ? (

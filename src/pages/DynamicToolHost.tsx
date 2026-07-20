@@ -58,6 +58,19 @@ export function DynamicToolHost() {
     return <div className="tool-host tool-host--error">Tool &quot;{toolId}&quot; not found.</div>;
   }
 
+  if (tool.status === "unreachable") {
+    return (
+      <div className="tool-host tool-host--error">
+        <h1>{tool.label}</h1>
+        <p>This tool is temporarily unavailable.</p>
+      </div>
+    );
+  }
+
+  if (tool.status === "loading") {
+    return <div className="tool-host home-page__status">Loading {tool.label}…</div>;
+  }
+
   if (appLoading) {
     return <div className="tool-host home-page__status">Loading {tool.label}…</div>;
   }

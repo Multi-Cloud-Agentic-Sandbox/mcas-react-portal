@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@mcas/auth-client";
-import { Button, Input, Text } from "@mcas/design-system";
+import { Badge, Button, DataTable, Input, Text, type CrudAction } from "@mcas/design-system";
 import {
   deleteTool,
   importToolFromManifest,
@@ -11,13 +11,16 @@ import type { ToolRegistryEntry } from "../types/tool";
 
 const emptyManifestUrl = "";
 
-export function AdminToolsPage() {
+export function AdminToolsPage({ embedded = false }: { embedded?: boolean } = {}) {
   const { ensureMcasToken } = useAuth();
-  const { tools, loading, error, reload } = useToolsRegistry({ activeOnly: false });
+  const { tools, loading, error, reload } = useToolsRegistry({
+    enrich: false,
+  });
   const [manifestUrl, setManifestUrl] = useState(emptyManifestUrl);
   const [preview, setPreview] = useState<ToolRegistryEntry | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [showImport, setShowImport] = useState(false);
 
   const handleImport = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -29,6 +32,7 @@ export function AdminToolsPage() {
       const entry = await importToolFromManifest(manifestUrl.trim(), token);
       setPreview(entry);
       setManifestUrl("");
+      setShowImport(false);
       await reload();
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Import failed");
@@ -51,12 +55,13 @@ export function AdminToolsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const onRowAction = async (action: CrudAction, row: ToolRegistryEntry) => {
+    if (action !== "delete") return;
     setBusy(true);
     setSubmitError(null);
     try {
       const token = await ensureMcasToken();
-      await deleteTool(id, token);
+      await deleteTool(row.id, token);
       await reload();
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Delete failed");
@@ -66,33 +71,38 @@ export function AdminToolsPage() {
   };
 
   return (
-    <div className="admin-page">
-      <h1 className="admin-page__title">Tool registry admin</h1>
+    <div className={embedded ? "admin-tab" : "admin-page"}>
+      {!embedded && <h1 className="admin-page__title">Tool registry admin</h1>}
       <Text variant="muted">
         Register tools from each remote&apos;s <code>tool.manifest.json</code>. Routes, scope,
         exposes and access rights are loaded from the manifest.
       </Text>
 
-      <form className="admin-form" onSubmit={(e) => void handleImport(e)}>
-        <div className="admin-form__row">
-          <label className="admin-form__label" htmlFor="tool-manifest">
-            Manifest URL
-          </label>
-          <Input
-            id="tool-manifest"
-            value={manifestUrl}
-            onChange={(e) => setManifestUrl(e.target.value)}
-            placeholder="http://localhost:5175/tool.manifest.json"
-            required
-          />
-        </div>
-        {submitError && <Text variant="small">{submitError}</Text>}
-        <div className="admin-form__actions">
-          <Button type="submit" disabled={busy}>
-            Register from manifest
-          </Button>
-        </div>
-      </form>
+      {showImport && (
+        <form className="admin-form" onSubmit={(e) => void handleImport(e)}>
+          <div className="admin-form__row">
+            <label className="admin-form__label" htmlFor="tool-manifest">
+              Manifest URL
+            </label>
+            <Input
+              id="tool-manifest"
+              value={manifestUrl}
+              onChange={(e) => setManifestUrl(e.target.value)}
+              placeholder="http://localhost:5175/tool.manifest.json"
+              required
+            />
+          </div>
+          {submitError && <Text variant="small">{submitError}</Text>}
+          <div className="admin-form__actions">
+            <Button type="submit" disabled={busy}>
+              Register from manifest
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setShowImport(false)}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+      )}
 
       {preview && (
         <section className="admin-preview">
@@ -111,42 +121,84 @@ export function AdminToolsPage() {
         </section>
       )}
 
-      <h2>Registered tools</h2>
       {loading && <p className="home-page__status">Loading…</p>}
       {error && <p className="home-page__error">{error}</p>}
-      <div className="admin-list">
-        {tools.map((tool) => (
-          <div key={tool.id} className="admin-list__item">
-            <div>
-              <strong>{tool.label}</strong>
-              <div className="admin-list__meta">{tool.id}</div>
-              <div className="admin-list__meta">Status: {tool.status}</div>
-              <div className="admin-list__meta">{tool.remoteEntry}</div>
-              <div className="admin-list__meta">{tool.basePath}</div>
-              <div className="admin-list__meta">
-                Routes:{" "}
-                {tool.routes.map((route) => (
-                  <span key={route.path} className="admin-list__route">
-                    {route.label} ({route.path})
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="admin-list__actions">
+      {!showImport && submitError && <p className="home-page__error">{submitError}</p>}
+
+      <DataTable
+        aria-label="Registered tools"
+        searchPlaceholder="Search tools…"
+        getRowId={(row) => row.id}
+        rows={tools}
+        columns={[
+          {
+            id: "label",
+            header: "Label",
+            cell: (row) => row.label,
+            getValue: (row) => row.label,
+          },
+          {
+            id: "id",
+            header: "Id",
+            cell: (row) => row.id,
+            getValue: (row) => row.id,
+          },
+          {
+            id: "status",
+            header: "Status",
+            cell: (row) => (
+              <Badge
+                variant={
+                  row.status === "unreachable"
+                    ? "danger"
+                    : row.status === "loading"
+                      ? "primary"
+                      : undefined
+                }
+              >
+                {row.status}
+              </Badge>
+            ),
+            getValue: (row) => row.status,
+            filterable: true,
+          },
+          {
+            id: "basePath",
+            header: "Base path",
+            cell: (row) => row.basePath,
+            getValue: (row) => row.basePath,
+          },
+          {
+            id: "routes",
+            header: "Routes",
+            cell: (row) => row.routes.map((r) => r.label).join(", ") || "—",
+            getValue: (row) => row.routes.map((r) => r.label).join(" "),
+          },
+          {
+            id: "sync",
+            header: "Sync",
+            cell: (row) => (
               <Button
+                type="button"
                 variant="secondary"
                 disabled={busy}
-                onClick={() => void handleSync(tool.id)}
+                onClick={() => void handleSync(row.id)}
               >
-                Sync manifest
+                Sync
               </Button>
-              <Button variant="secondary" disabled={busy} onClick={() => void handleDelete(tool.id)}>
-                Delete
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+            ),
+            getValue: () => "",
+          },
+        ]}
+        rowActions={["delete"]}
+        onRowAction={(action, row) => void onRowAction(action, row)}
+        onCreate={() => {
+          setShowImport(true);
+          setSubmitError(null);
+        }}
+        createLabel="Register tool"
+        emptyMessage="No tools registered"
+      />
     </div>
   );
 }

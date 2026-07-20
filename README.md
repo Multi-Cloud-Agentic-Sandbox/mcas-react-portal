@@ -2,7 +2,7 @@
 
 > Part of **MCAS** — full repository map: **[mcas-agent-framework](https://github.com/Multi-Cloud-Agentic-Sandbox/mcas-agent-framework)**.
 
-Module Federation **host** for the MCAS micro-frontend platform: home grid, dynamic tool routes, admin registry UI, and design-system showcase.
+Module Federation **host** for the MCAS micro-frontend platform: home grid, dynamic tool routes, and admin registry UI. Design-system demos live in the **Design System DEMO** tool card on Home.
 
 ## Prerequisites
 
@@ -41,9 +41,8 @@ All registry fetches send `Authorization: Bearer` via `ensureMcasToken()`.
 ## Routes
 
 - `/` — active tools from registry
-- `/tools/:toolId/*` — federated remotes
+- `/tools/:toolId/*` — federated remotes (incl. Design System DEMO showcase)
 - `/admin/tools` — manifest import (all statuses)
-- `/design-system/*` — showcase
 
 ## Env
 

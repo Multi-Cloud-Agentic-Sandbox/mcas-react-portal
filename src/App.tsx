@@ -1,17 +1,19 @@
 import { Route, Routes } from "react-router-dom";
-import {
-  AgentProgressPage,
-  ComponentsShowcasePage,
-  TokensPage,
-} from "@mcas/design-system/showcase";
 import { AppShell, Footer } from "@mcas/design-system/layout";
 import { RequireAuth } from "./auth/RequireAuth";
 import { PortalHeader } from "./layout/PortalHeader";
+import { AdminIndexRedirect, AdminLayout } from "./pages/AdminLayout";
 import { AdminToolsPage } from "./pages/AdminToolsPage";
 import { AuthPage } from "./pages/AuthPage";
 import { DynamicToolHost } from "./pages/DynamicToolHost";
 import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { GroupDetailPage } from "./pages/admin/GroupDetailPage";
+import { GroupsListPage } from "./pages/admin/GroupsListPage";
+import { RoleDetailPage } from "./pages/admin/RoleDetailPage";
+import { RolesListPage } from "./pages/admin/RolesListPage";
+import { UserDetailPage } from "./pages/admin/UserDetailPage";
+import { UsersListPage } from "./pages/admin/UsersListPage";
 import "./layout/portal.css";
 
 export default function App() {
@@ -39,37 +41,22 @@ export default function App() {
           }
         />
         <Route
-          path="/admin/tools"
+          path="/admin"
           element={
             <RequireAuth>
-              <AdminToolsPage />
+              <AdminLayout />
             </RequireAuth>
           }
-        />
-        <Route
-          path="/design-system/tokens"
-          element={
-            <RequireAuth>
-              <TokensPage />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/design-system/components"
-          element={
-            <RequireAuth>
-              <ComponentsShowcasePage />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/design-system/agent-progress"
-          element={
-            <RequireAuth>
-              <AgentProgressPage />
-            </RequireAuth>
-          }
-        />
+        >
+          <Route index element={<AdminIndexRedirect />} />
+          <Route path="tools" element={<AdminToolsPage embedded />} />
+          <Route path="users" element={<UsersListPage />} />
+          <Route path="users/:uid" element={<UserDetailPage />} />
+          <Route path="groups" element={<GroupsListPage />} />
+          <Route path="groups/:groupId" element={<GroupDetailPage />} />
+          <Route path="roles" element={<RolesListPage />} />
+          <Route path="roles/:roleId" element={<RoleDetailPage />} />
+        </Route>
         <Route
           path="*"
           element={

@@ -12,12 +12,15 @@ function bearerHeaders(token?: string | null, extra?: HeadersInit): HeadersInit 
 }
 
 export interface UseToolsRegistryOptions {
-  /** When true (default), only tools with status === "active" are returned. */
-  activeOnly?: boolean;
+  /**
+   * When true, GET /tools?enrich=true (blocking manifest fetch).
+   * When false (default), list DB rows instantly then resolve each via GET /tools/{id}.
+   */
+  enrich?: boolean;
 }
 
 export function useToolsRegistry(options: UseToolsRegistryOptions = {}) {
-  const { activeOnly = true } = options;
+  const { enrich = false } = options;
   const { ensureMcasToken } = useAuth();
   const [tools, setTools] = useState<ToolRegistryEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,27 +31,67 @@ export function useToolsRegistry(options: UseToolsRegistryOptions = {}) {
     setError(null);
     try {
       const token = await ensureMcasToken();
-      const response = await fetch(`${registryUrl}/tools`, {
+      const qs = enrich ? "?enrich=true" : "";
+      const response = await fetch(`${registryUrl}/tools${qs}`, {
         headers: bearerHeaders(token),
       });
       if (!response.ok) {
         throw new Error(`Registry error: ${response.status}`);
       }
       const data = (await response.json()) as ToolRegistryEntry[];
-      setTools(activeOnly ? data.filter((tool) => tool.status === "active") : data);
+
+      if (enrich) {
+        setTools(data);
+        return;
+      }
+
+      // Instant DB list, then resolve manifests in parallel.
+      setTools(data.map((tool) => ({ ...tool, status: "loading" as const })));
+      setLoading(false);
+
+      await Promise.all(
+        data.map(async (tool) => {
+          try {
+            const resolved = await fetch(`${registryUrl}/tools/${tool.id}`, {
+              headers: bearerHeaders(token),
+            });
+            if (!resolved.ok) {
+              throw new Error(`Resolve failed: ${resolved.status}`);
+            }
+            const entry = (await resolved.json()) as ToolRegistryEntry;
+            setTools((prev) => prev.map((row) => (row.id === entry.id ? entry : row)));
+          } catch {
+            setTools((prev) =>
+              prev.map((row) =>
+                row.id === tool.id ? { ...row, status: "unreachable" } : row,
+              ),
+            );
+          }
+        }),
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load tools");
       setTools([]);
     } finally {
       setLoading(false);
     }
-  }, [activeOnly, ensureMcasToken]);
+  }, [enrich, ensureMcasToken]);
 
   useEffect(() => {
     void reload();
   }, [reload]);
 
   return { tools, loading, error, reload };
+}
+
+export async function listTools(token?: string | null): Promise<ToolRegistryEntry[]> {
+  const response = await fetch(`${registryUrl}/tools?enrich=true`, {
+    headers: bearerHeaders(token),
+  });
+  if (!response.ok) {
+    throw new Error(`Registry error: ${response.status}`);
+  }
+  return (await response.json()) as ToolRegistryEntry[];
 }
 
 export async function importToolFromManifest(
